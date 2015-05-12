@@ -1,0 +1,42 @@
+#!/bin/bash
+# $Id: zippedexe,v 1.30 2015/04/29 14:34:36 fulford Exp $
+# $Source: /src/merlin/usr/local/etc/RCS/zippedexe,v $
+# $Revision: 1.30 $
+# Author C W Fulford.
+# Copyright 2015 (c) C W Fulford.
+# Licensed for public use under the LGPL, .
+# For assistance contact fulford@fulford.net 0709 229 5385
+########################################################################
+cmd=`basename $0`
+input="-"
+syntax="$cmd [-d] [-v]|-v"
+while [ $# -gt 0 ] ;do
+	case $1 in 
+		-d) set -x;debug=0;shift;;
+		-V) echo "$cmd $Revision: 1.30 $ $Date: 2015/04/29 14:34:36 $"|awk '{print $1,$3,$6}';exit;;  
+	esac
+done
+ripmime=/usr/local/bin/ripmime
+[ -x "$ripmime" ] ||{
+	echo "$cmd: Can't find $ripmime" >&2
+	exit 1
+}
+tdir=/tmp/$cmd$$
+mkdir $tdir
+#mpipe=$tdir/pipe
+#mkfifo $mpipe
+tmsg=$tdir/msg
+cat -|tee $tmsg|$ripmime -i - -d $tdir
+cd $tdir
+Spam_exe=1
+for f in *.zip ;do
+	if unzip -l "$f" |grep -s "\.exe" >/dev/null;then
+		Spam_exe=0
+		#cat $tmsg|formail -A"CityLinux_ZEXE: ZIPPED_EXE"
+	else
+		Spam_exe=1
+	fi
+done
+cat $tmsg
+rm -r $tdir
+exit $Spam_exe

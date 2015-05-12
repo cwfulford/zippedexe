@@ -1,0 +1,189 @@
+
+<p><a href="#heading1">NAME</a><br/>
+<a href="#heading2">SYNOPSIS</a><br/>
+<a href="#heading3">AVAILABILITY</a><br/>
+<a href="#heading4">DESCRIPTION</a><br/>
+<a href="#heading5">OPTIONS</a><br/>
+<a href="#heading6">FILES</a><br/>
+<a href="#heading7">EXAMPLES</a><br/>
+<a href="#heading8">BUGS</a><br/>
+<a href="#heading9">SEE ALSO</a><br/>
+<a href="#heading10">AUTHOR</a><br/>
+<a href="#heading11">HISTORY</a><br/>
+
+</p>
+<hr/>
+
+
+<h2 id="heading1">NAME
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b><a href="./scripts.php?script=zippedexe">zippedexe</a></b>
+- unpacks zipped e-mail attachments and checks the contents
+for <b>.exe</b> files.</p>
+
+<h2 id="heading2">SYNOPSIS
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b><a href="./scripts.php?script=zippedexe">zippedexe</a></b>
+[<b>-d</b>] | [<b>-V</b> ]</p>
+
+<h2 id="heading3">AVAILABILITY
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b><a href="./scripts.php?script=zippedexe">zippedexe</a></b>
+is a Bourne shell script which should work equally well on
+all versions of UNIX, Linux and Mac OS X.</p>
+
+<h2 id="heading4">DESCRIPTION
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><b><a href="./scripts.php?script=zippedexe">zippedexe</a></b>
+uses P.L. Daniels&rsquo; &quot;<b><a href="http://pldaniels.com/ripmime">ripmime
+</a></b>&quot; to
+deconstruct an e-mail message and &quot;<b><a href="http://www.info-zip.org/pub/infozip/">unzip
+</a></b>&quot;
+to list the contents of any resulting zipped files. If a
+<b>.exe</b> file is found the script returns a zero value
+(true) and adds &quot;<b>X-CityLinux: ZIPPED_EXE</b>&quot;
+to the message headers.</p>
+
+<p style="margin-left:11%; margin-top: 1em">The script can
+be used from the command line as a filter but is designed to
+be invoked by <b>procmail</b> when delivering mail.</p>
+
+<p style="margin-left:11%; margin-top: 1em">When
+<b>procmail</b> is used with <b>sendmail</b> and
+<b>spamassassin</b> it is a fairly simple matter to add the
+header for all users with a recipe in
+<i>/etc/<a href="./scripts.php?script=procmailrc">procmailrc</a></i>. Then by adding a rule to
+<b>spamassassin</b> which increments the <b>spam</b> score
+appropriately it is possible to leave dispostion to the same
+criteria as all other <b>spam</b> messages.</p>
+
+<p style="margin-left:11%; margin-top: 1em">In environments
+where <b>plesk</b>, <b>postfix</b> and <b>spamassassin</b>
+are used I have been unable to find a way to do this and so
+I employ a more complete <b><a href="./scripts.php?script=.procmailrc">.procmailrc</a></b> in the virtual
+mail user&rsquo;s &quot;home&quot; directory.</p>
+
+<p style="margin-left:11%; margin-top: 1em">Procmail is
+invoked by modifying <a href="./scripts.php?script=.qmail">.qmail</a> in the same virtual mail users
+&quot;home&quot; directory, usually
+&quot;/var/qmail/mailusers/&lt;mail domain name&gt;/&lt;mail
+user&gt;/<a href="./scripts.php?script=.qmail">.qmail</a>.</p>
+
+<p style="margin-left:11%; margin-top: 1em">Note that the
+<a href="./scripts.php?script=.procmailrc">.procmailrc</a> recipes provide for delivery of messages to the
+postfix mail folder subdirectories (eg
+Maildir/.Spam{new,cur} by using the <b>postfix</b> command
+&quot;<b>deliverquota</b>&quot; for final delivery as
+<i>procmail</i> doesn&rsquo;t understand this structure.</p>
+
+<h2 id="heading5">OPTIONS
+</h2>
+
+
+<table width="100%" border="0" rules="none" frame="void"
+       cellspacing="0" cellpadding="0">
+<colgroup><col width="11%"></col>
+<col width="3%"></col>
+<col width="4%" class="center"></col>
+<col width="82%"></col>
+</colgroup>
+<tr valign="top" align="left">
+<td></td>
+<td>
+
+
+<p style="margin-top: 1em"><b>-d</b></p></td>
+<td></td>
+<td>
+
+
+<p style="margin-top: 1em">Set debug mode on. The <b>-x</b>
+option is set within the shell and each command in the
+script is echoed to the console.</p></td></tr>
+<tr valign="top" align="left">
+<td></td>
+<td>
+
+
+<p><b>-V</b></p></td>
+<td></td>
+<td>
+
+
+<p>Print the version details and exit.</p></td></tr>
+</table>
+
+<h2 id="heading6">FILES
+</h2>
+
+
+
+<p style="margin-left:11%; margin-top: 1em"><i>/etc/mail/spamassassin/<a href="./scripts.php?script=local.cf">local.cf</a></i>,
+<i><br/>
+/etc/<a href="./scripts.php?script=procmailrc">procmailrc</a></i>, <i><br/>
+/var/qmail/mailnames/&lt;mail domain&gt;/&lt;virtual mail
+user&gt;/<a href="./scripts.php?script=.procmailrc">.procmailrc</a></i>, <i><br/>
+/var/qmail/mailnames/&lt;mail domain&gt;/&lt;virtual mail
+user&gt;/<a href="./scripts.php?script=.qmail">.qmail</a></i>,</p>
+
+<h2 id="heading7">EXAMPLES
+</h2>
+
+
+<p style="margin-left:22%; margin-top: 1em"><tt>cat
+&lt;message_file&gt;|<a href="./scripts.php?script=zippedexe">zippedexe</a></tt></p>
+
+<p style="margin-left:11%; margin-top: 1em">The message is
+deconstructed to a temporary directory below <i>/tmp</i>.
+The contents of any files with a <i>.zip</i> extension are
+listed and if the archive contains <i>.exe</i> files the
+header <b>X-CityLinux: ZIPPED_EXE</b> is inserted and the
+script exits with value <b>0</b> (zero).</p>
+
+<p style="margin-left:11%; margin-top: 1em">If no
+<i>.EXE</i> is found the exit value is <b>1</b>.</p>
+
+<p style="margin-left:11%; margin-top: 1em">The message is
+output to <i>STANDARD OUT</i></p>
+
+<h2 id="heading8">BUGS
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">The script is
+quite crude and has very little, if any, error checking. The
+consequences of unexpected input are untested.</p>
+
+<h2 id="heading9">SEE ALSO
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em"><i>How-to junk
+mail with zipped exe attachments</i>.</p>
+
+<h2 id="heading10">AUTHOR
+</h2>
+
+
+<p style="margin-left:11%; margin-top: 1em">Clifford W
+Fulford, <a href="http://www.citylinux.com"
+title="Go to the City Linux homepage">
+City Linux
+</a>. Contact <a href="mailto:fulford@fulford.net" title="Send mail to Clifford W Fulford">fulford@fulford.net</a> or +44
+(0)709 229 5385.</p>
+
+<h2 id="heading11">HISTORY
+</h2>
+<hr/>

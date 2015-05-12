@@ -1,0 +1,99 @@
+.TH ZIPPEDEXE 8l "28th April 2015 r1.30
+.SH NAME
+.B zippedexe
+- unpacks zipped e-mail attachments and checks the contents for  \fB.exe\fR
+files. 
+.SH SYNOPSIS
+\fBzippedexe\fR
+[\fB-d\fR] |
+[\fB-V \fR]
+.br
+.SH AVAILABILITY
+.B zippedexe
+is a Bourne shell script which should work equally well on all versions of UNIX,
+Linux and Mac OS X.
+.SH DESCRIPTION
+.B zippedexe
+uses P.L. Daniels' "\fBripmime\fR" to deconstruct an e-mail message and "\fBunzip\fR"
+to list the contents of any resulting zipped files. If a \fB.exe\fR file
+is found the script returns a zero value (true) and adds 
+"\fBX-CityLinux: ZIPPED_EXE\fR" to the message headers.
+.LP
+The script can be used from the command line as a filter but is designed
+to be invoked by \fBprocmail\fR when delivering mail.
+.LP
+When 
+.B procmail
+is used with 
+.B sendmail
+and
+.B spamassassin
+it is a fairly simple matter to add the header for all users with a recipe
+in \fI/etc/procmailrc\fR.  Then by adding a rule to 
+.B spamassassin
+which increments the \fBspam\fR score appropriately it is possible to leave
+dispostion to the same criteria as all other 
+.B spam
+messages.
+.LP
+In environments where
+.BR plesk ,
+.B postfix 
+and
+.B spamassassin
+are used I have been unable to find a way to do this and so I employ a
+more complete  
+.B .procmailrc
+in the virtual mail user's "home" directory.
+.LP
+Procmail is invoked by modifying .qmail in the same virtual mail users "home"
+directory, usually "/var/qmail/mailusers/<mail domain name>/<mail user>/.qmail.
+.LP
+Note that the .procmailrc recipes provide for delivery of messages to the
+postfix mail folder subdirectories (eg Maildir/.Spam{new,cur} by 
+using the 
+.B postfix
+command "\fBdeliverquota\fR" for final delivery as \fIprocmail\fR doesn't
+understand this structure.
+.SH OPTIONS
+.TP 5
+.B -d
+Set debug mode on. 
+The \fB-x\fR option is set within the shell
+and each command in the script is echoed to the console.
+.TP 5
+\fB-V\fR
+Print the version details and exit.
+.SH FILES
+\fI/etc/mail/spamassassin/local.cf\fR,
+.br
+\fI/etc/procmailrc\fR,
+.br
+\fI/var/qmail/mailnames/<mail domain>/<virtual mail user>/.procmailrc\fR,
+.br
+\fI/var/qmail/mailnames/<mail domain>/<virtual mail user>/.qmail\fR,
+.SH EXAMPLES
+.IP
+.ft CW
+cat <message_file>|zippedexe 
+.ft R
+.LP
+The message is deconstructed to a temporary directory below \fI/tmp\fR.
+The contents of any files with a \fI.zip\fR extension are listed and
+if the archive contains \fI.exe\fR files the header \fBX-CityLinux:
+ZIPPED_EXE\fR is inserted and the script exits with value \fB0\fR (zero).
+.LP
+If no 
+.I .EXE
+is found the exit value is \fB1\fR.
+.LP
+The message is output to 
+.I "STANDARD OUT"
+.SH BUGS
+The script is quite crude and has very little, if any,  error checking.
+The consequences of unexpected input are untested.
+.SH SEE ALSO
+\fIHow-to junk mail with zipped exe attachments\fR.
+.SH AUTHOR
+Clifford W Fulford, City Linux. Contact fulford@fulford.net or +44 (0)709 229 5385.
+.SH HISTORY
